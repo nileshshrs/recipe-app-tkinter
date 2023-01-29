@@ -23,6 +23,8 @@ def registerPage():
     def navigate():
         window.destroy()
         #loginPage()
+
+
     imageFrame = customtkinter.CTkFrame(
         master=window, height=appHeight, width=.35*appWidth,)
     imageFrame.place(x=0, y=0)
