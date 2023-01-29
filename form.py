@@ -7,6 +7,59 @@ from PIL import ImageTk, Image
 
 textcolor = "whitesmoke"
 
+
+def loginPage():
+    global bgImage
+    window = CTk()
+    appWidth = 360
+    appHeight = 470
+    screenHeight = window.winfo_screenheight()
+    screenWidth = window.winfo_screenwidth()
+    centerX = (screenWidth/2)-(appWidth/2)
+    centerY = (screenHeight/2)-(appHeight/2)
+    window.geometry(f"{appWidth}x{appHeight}+{int(centerX)}+{int(centerY)}")
+    window.resizable(False, False)
+    window.title("login")
+    def navigate():
+            window.destroy()
+            registerPage()
+
+    def getUserData():
+        pass
+
+    frame1 = customtkinter.CTkFrame(
+        window, height=appHeight, width=appWidth, bg_color="black")
+    frame1.pack(fill="both")
+    frame1.pack_propagate(False)
+    loginLabel = customtkinter.CTkLabel(master=frame1, text="Sign In !", font=(
+        "helvatica", 20, "bold"), text_color=textcolor)
+    loginLabel.place(x=26, y=20)
+    bgImage = customtkinter.CTkImage(
+        light_image=Image.open("Assets/4.png"), size=(175, 141))
+    imgWidget = customtkinter.CTkLabel(master=frame1, image=bgImage, text="")
+    imgWidget.pack(pady=55, fill="both")
+    errorLabel = customtkinter.CTkLabel(
+        master=frame1, text="", width=300, height=25)
+    errorLabel.place(y=200, x=25)
+    usernameEntry = customtkinter.CTkEntry(
+        master=frame1, placeholder_text="username", width=300, height=35,)
+    usernameEntry.place(y=250, x=25)
+    passwordEntry = customtkinter.CTkEntry(
+        master=frame1, placeholder_text="password", width=300, height=35)
+    passwordEntry.place(y=300, x=25)
+    passwordEntry.configure(show="*")
+    loginbtn = customtkinter.CTkButton(
+        master=frame1, text="Login", width=300, height=35, command=getUserData)
+    loginbtn.place(y=350, x=25)
+    registerLabel = customtkinter.CTkLabel(
+        master=frame1, text="Dont have an account?", font=("helvatica", 16))
+    registerLabel.place(y=405, x=25)
+    registerBtn = customtkinter.CTkButton(
+        master=frame1, text="Register now", width=120, command=navigate)
+    registerBtn.place(x=204, y=405)
+    window.mainloop()
+
+
 def registerPage():
     window = CTk()
     registerImg = customtkinter.CTkImage(
@@ -20,11 +73,12 @@ def registerPage():
     window.geometry(f"{appWidth}x{appHeight}+{int(centerX)}+{int(centerY)}")
     window.resizable(False, False)
     window.title("register")
+
     def navigate():
         window.destroy()
-        #loginPage()
-
-
+        loginPage()
+    def getUserData():
+        pass
     imageFrame = customtkinter.CTkFrame(
         master=window, height=appHeight, width=.35*appWidth,)
     imageFrame.place(x=0, y=0)
@@ -63,7 +117,7 @@ def registerPage():
     registerconfirmpassword.place(x=57, y=340)
     registerconfirmpassword.configure(show="*")
     registerBtn = customtkinter.CTkButton(
-        master=formFrame, text="Sign up", width=417, height=30, )#command=getUserData
+        master=formFrame, text="Sign up", width=417, height=30,  command=getUserData)  
     registerBtn.place(x=57, y=390)
     loginLabel = customtkinter.CTkLabel(
         master=formFrame, text="Dont  have  an  account  ?", font=("helvatica", 16, "bold"))
