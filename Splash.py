@@ -1,1 +1,1 @@
-tkinter="this is a recipe app"
+tkinter="this is a recipe app."
