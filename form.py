@@ -23,10 +23,28 @@ def loginPage():
     def navigate():
             window.destroy()
             registerPage()
-
+    ## need to connect to the data base 
     def getUserData():
-        pass
-
+        #global credentials
+        username = usernameEntry.get().lower()
+        password = passwordEntry.get()
+        #c.execute("select * from userdata where USERNAME='" + username+"' and PASSWORD='"+password+"'")
+        userdata = ["avarittia", "siberiaV2"]#c.fetchall()
+        if userdata != []:
+            for user in userdata:
+                if username and password in user:
+                    def fetchUser():
+                        global credentials
+                        window.destroy()
+                        credentials = user[0]
+                        # mainScreen()
+                    fetchUser()
+        else:
+            errorLabel.configure(text="username or password incorrect",
+                                 bg_color="lightpink", text_color="firebrick")
+            errorLabel.after(5000, lambda: errorLabel.configure(
+                text="", bg_color="#2B2B2B"))
+      ## need to connect to the database  
     frame1 = customtkinter.CTkFrame(
         window, height=appHeight, width=appWidth, bg_color="black")
     frame1.pack(fill="both")
