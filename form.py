@@ -79,6 +79,7 @@ def loginPage():
 
 
 def registerPage():
+    global registerImg
     window = CTk()
     registerImg = customtkinter.CTkImage(
         light_image=Image.open("Assets/5.png"), size=(250, 250))
@@ -91,78 +92,71 @@ def registerPage():
     window.geometry(f"{appWidth}x{appHeight}+{int(centerX)}+{int(centerY)}")
     window.resizable(False, False)
     window.title("register")
-
     def navigate():
         window.destroy()
         loginPage()
-
-    ##need to connect the database to it
     def getUserData():
-            firstname = registerFirstName.get().lower()
-            lastname = registerLastName.get().lower()
-            username = registerusername.get().lower()
-            email = registeremail.get().lower()
-            password = registerpassword.get()
-            confirmpassword = registerconfirmpassword.get()
-            # c.execute("select * from userdata where USERNAME='"+username+"'")
-            # dataResult = c.fetchall()
-            dataResult=[] 
-            userData = [
-                (firstname),
-                (lastname),
-                (username),
-                (email),
-                (password),
-            ]
-            if dataResult == []:
-                if firstname == "" or lastname == "" or username == "empty" or password == "" or email == "" or confirmpassword == "":
-                    errorLabel.configure(
-                        text="please enter all the form fields", bg_color="lightpink", text_color="firebrick")
-                    errorLabel.after(5000, lambda: errorLabel.configure(
-                        text="", bg_color="#2B2B2B"))
-                elif len(firstname) <= 3 or len(lastname) <= 3 or len(username) <= 3:
-                    errorLabel.configure(text="username, firstname and lastname must be more than 3 letters",
-                                        bg_color="lightpink", text_color="firebrick")
-                    errorLabel.after(5000, lambda: errorLabel.configure(
-                        text="", bg_color="#2B2B2B"))
-                elif "." and "@" not in email:
-                    errorLabel.configure(
-                        text="invalid email address", bg_color="lightpink", text_color="firebrick")
-                    errorLabel.after(5000, lambda: errorLabel.configure(
-                        text="", bg_color="#2B2B2B"))
-                elif len(password) <= 5:
-                    errorLabel.configure(text="password must me longer than 5 character",
-                                        bg_color="lightpink", text_color="firebrick")
-                    errorLabel.after(5000, lambda: errorLabel.configure(
-                        text="", bg_color="#2B2B2B"))
-                elif password != confirmpassword:
-                    errorLabel.configure(
-                        text="password does not match", bg_color="lightpink", text_color="firebrick")
-                    errorLabel.after(5000, lambda: errorLabel.configure(
-                        text="", bg_color="#2B2B2B"))
-                else:
-                    # c.execute(
-                    #     "insert into userdata (FIRSTNAME, LASTNAME, USERNAME, EMAIL, PASSWORD) values(?,?,?,?,?)", (userData))
-                    # cnxt.commit()
-                    errorLabel.configure(
-                        text="registration successful", bg_color="lightgreen", text_color="darkgreen")
-                    errorLabel.after(5000, lambda: errorLabel.configure(
-                        text="", bg_color="#2B2B2B"))
-            else:
-                errorLabel.configure(text="username has already been taken, please select a new username",
-                                    bg_color="lightpink", text_color="firebrick")
+        firstname = registerFirstName.get().lower()
+        lastname = registerLastName.get().lower()
+        username = registerusername.get().lower()
+        email = registeremail.get().lower()
+        password = registerpassword.get()
+        confirmpassword = registerconfirmpassword.get()
+        c.execute("select * from userdata where USERNAME='"+username+"'")
+        dataResult = c.fetchall()
+        userData = [
+            (firstname),
+            (lastname),
+            (username),
+            (email),
+            (password),
+        ]
+        if dataResult == []:
+            if firstname == "" or lastname == "" or username == "empty" or password == "" or email == "" or confirmpassword == "":
+                errorLabel.configure(
+                    text="please enter all the form fields", bg_color="lightpink", text_color="firebrick")
                 errorLabel.after(5000, lambda: errorLabel.configure(
                     text="", bg_color="#2B2B2B"))
+            elif len(firstname) <= 3 or len(lastname) <= 3 or len(username) <= 3:
+                errorLabel.configure(text="username, firstname and lastname must be more than 3 letters",
+                                     bg_color="lightpink", text_color="firebrick")
+                errorLabel.after(5000, lambda: errorLabel.configure(
+                    text="", bg_color="#2B2B2B"))
+            elif "." and "@" not in email:
+                errorLabel.configure(
+                    text="invalid email address", bg_color="lightpink", text_color="firebrick")
+                errorLabel.after(5000, lambda: errorLabel.configure(
+                    text="", bg_color="#2B2B2B"))
+            elif len(password) <= 5:
+                errorLabel.configure(text="password must me longer than 5 character",
+                                     bg_color="lightpink", text_color="firebrick")
+                errorLabel.after(5000, lambda: errorLabel.configure(
+                    text="", bg_color="#2B2B2B"))
+            elif password != confirmpassword:
+                errorLabel.configure(
+                    text="password does not match", bg_color="lightpink", text_color="firebrick")
+                errorLabel.after(5000, lambda: errorLabel.configure(
+                    text="", bg_color="#2B2B2B"))
+            else:
+                c.execute(
+                    "insert into userdata (FIRSTNAME, LASTNAME, USERNAME, EMAIL, PASSWORD) values(?,?,?,?,?)", (userData))
+                cnxt.commit()
+                errorLabel.configure(
+                    text="registration successful", bg_color="lightgreen", text_color="darkgreen")
+                errorLabel.after(5000, lambda: errorLabel.configure(
+                    text="", bg_color="#2B2B2B"))
+        else:
+            errorLabel.configure(text="username has already been taken, please select a new username",
+                                 bg_color="lightpink", text_color="firebrick")
+            errorLabel.after(5000, lambda: errorLabel.configure(
+                text="", bg_color="#2B2B2B"))
 
-            registerFirstName.delete(0, END)
-            registerLastName.delete(0, END)
-            registerusername.delete(0, END)
-            registeremail.delete(0, END)
-            registerpassword.delete(0, END)
-            registerconfirmpassword.delete(0, END)
-
-            ## need to connect a database to it
-
+        registerFirstName.delete(0, END)
+        registerLastName.delete(0, END)
+        registerusername.delete(0, END)
+        registeremail.delete(0, END)
+        registerpassword.delete(0, END)
+        registerconfirmpassword.delete(0, END)
     imageFrame = customtkinter.CTkFrame(
         master=window, height=appHeight, width=.35*appWidth,)
     imageFrame.place(x=0, y=0)
@@ -201,7 +195,7 @@ def registerPage():
     registerconfirmpassword.place(x=57, y=340)
     registerconfirmpassword.configure(show="*")
     registerBtn = customtkinter.CTkButton(
-        master=formFrame, text="Sign up", width=417, height=30,  command=getUserData)  
+        master=formFrame, text="Sign up", width=417, height=30, command=getUserData)
     registerBtn.place(x=57, y=390)
     loginLabel = customtkinter.CTkLabel(
         master=formFrame, text="Dont  have  an  account  ?", font=("helvatica", 16, "bold"))
