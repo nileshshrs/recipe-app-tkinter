@@ -4,10 +4,12 @@ import tkinter
 import customtkinter
 from tkinter import ttk
 from PIL import ImageTk, Image
-
+import sqlite3
+from main import mainScreen
 textcolor = "whitesmoke"
-
-
+cnxt = sqlite3.connect("data/userdata.db")
+c = cnxt.cursor()
+c.execute("CREATE TABLE IF NOT EXISTS userdata (USERNAME TEXT PRIMARY KEY NOT NULL UNIQUE, FIRSTNAME TEXT NOT NULL, LASTNAME TEXT NOT NULL, EMAIL TEXT NOT NULL, PASSWORD TEXT NOT NULL)")
 def loginPage():
     global bgImage
     window = CTk()
@@ -21,15 +23,15 @@ def loginPage():
     window.resizable(False, False)
     window.title("login")
     def navigate():
-            window.destroy()
-            registerPage()
-    ## need to connect to the data base 
+        window.destroy()
+        registerPage()
     def getUserData():
-        #global credentials
+        global credentials
         username = usernameEntry.get().lower()
         password = passwordEntry.get()
-        #c.execute("select * from userdata where USERNAME='" + username+"' and PASSWORD='"+password+"'")
-        userdata = ["avarittia", "siberiaV2"]#c.fetchall()
+        c.execute("select * from userdata where USERNAME='" +
+                  username+"' and PASSWORD='"+password+"'")
+        userdata = c.fetchall()
         if userdata != []:
             for user in userdata:
                 if username and password in user:
@@ -37,14 +39,13 @@ def loginPage():
                         global credentials
                         window.destroy()
                         credentials = user[0]
-                        # mainScreen()
+                        mainScreen()
                     fetchUser()
         else:
             errorLabel.configure(text="username or password incorrect",
                                  bg_color="lightpink", text_color="firebrick")
             errorLabel.after(5000, lambda: errorLabel.configure(
                 text="", bg_color="#2B2B2B"))
-      ## need to connect to the database  
     frame1 = customtkinter.CTkFrame(
         window, height=appHeight, width=appWidth, bg_color="black")
     frame1.pack(fill="both")
@@ -76,7 +77,6 @@ def loginPage():
         master=frame1, text="Register now", width=120, command=navigate)
     registerBtn.place(x=204, y=405)
     window.mainloop()
-
 
 def registerPage():
     global registerImg
