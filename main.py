@@ -113,7 +113,182 @@ def mainScreen():
         master=recipeViewFrame, text="Done cooking or viewing your recipe ?", text_color=textcolor, font=("", 17, "italic"))
     logoutlabel.pack(anchor=W, pady=10, padx=10)
 
+    # functions
 
+    for record in records:
+        recipeList.insert(END, record[0].capitalize())
+    # delete
+
+    def delete():
+        global selectRecipe
+
+        deleteRecipe = recipeList.get(ANCHOR).lower()
+        c.execute("delete from recipedata where USERNAME='" +
+                  users+"' and RECIPETITLE='"+deleteRecipe+"'")
+        cnxt.commit()
+        recipeList.delete(ANCHOR)
+
+        if selectRecipe == "":
+            pass
+        elif deleteRecipe == selectRecipe or selectRecipe != "":
+            viewRecipeTitle.configure(text="the recipe has been deleted")
+            recipeBox.configure(state=NORMAL)
+            recipeBox.delete(1.0, END)
+            recipeBox.insert(0.0, "please select a new recipe")
+            recipeBox.configure(state=DISABLED)
+            selectRecipe = ""
+
+    # create
+
+    def createMyRecipe():
+        global selectRecipe
+        recipeName = titleEntry.get().lower()
+        recipeText = recipeDetailsbox.get("0.0", "end").lower()
+
+        c.execute("select * from recipedata where USERNAME='" +
+                  users+"'and RECIPETITLE='"+recipeName+"'")
+        titlelist = c.fetchall()
+
+        if recipeName == "" or recipeText == "":
+            viewRecipeTitle.configure(text="Recipe Title or Text Area Empty")
+            recipeBox.configure(state=NORMAL)
+            recipeBox.delete(1.0, END)
+            recipeBox.insert(
+                0.0, "Please add a title and a description you want to save as recipe.")
+            recipeBox.configure(state=DISABLED)
+
+        elif titlelist != []:
+            print("recipe of this name already exists in your library")
+        else:
+            recipeData = [
+                users,
+                recipeName,
+                recipeText,
+
+            ]
+
+            c.execute(
+                "insert into recipedata (USERNAME,RECIPETITLE, RECIPEDETAILS) values(?,?,?)", recipeData)
+            cnxt.commit()
+            recipeList.insert(END, recipeName.capitalize())
+
+            titleEntry.delete(0, END)
+            recipeDetailsbox.delete(1.0, END)
+            viewRecipeTitle.configure(text=recipeName.capitalize())
+            recipeBox.configure(state=NORMAL)
+            recipeBox.delete(1.0, END)
+            recipeBox.insert(0.0, "Your recipe has been created succesfully")
+            recipeBox.configure(state=DISABLED)
+            selectRecipe = recipeName
+
+    # fetch
+
+    def fetchMyRecipe():
+        global updateRecipe
+        updateRecipe = recipeList.get(ANCHOR).lower()
+        c.execute("select * from recipedata where USERNAME='" +
+                  users+"' and RECIPETITLE='"+updateRecipe+"'")
+        results = c.fetchall()
+        if results == []:
+            print("no value selected")
+        else:
+            titleEntry.delete(0, END)
+            recipeDetailsbox.delete(1.0, END)
+            recipetextToUpdate = results[0][3]
+            recipeDetailsbox.insert(0.0, str(recipetextToUpdate))
+            titleEntry.insert(0, results[0][2])
+            updateBtn.configure(state=NORMAL)
+            createBtn.configure(state=DISABLED)
+    # confirm and update
+
+    def updateMyRecipe():
+        recipeTitle = titleEntry.get().lower()
+        recipeDetails = recipeDetailsbox.get("0.0", "end").lower()
+
+        if recipeTitle == "" or recipeDetails == "":
+            print("no title or details to update")
+        else:
+            c.execute("update recipedata set RECIPETITLE=:title, RECIPEDETAILS=:details WHERE USERNAME=:id and RECIPETITLE=:name", {
+                'title': recipeTitle, 'details': recipeDetails, 'id': users, 'name': updateRecipe})
+            cnxt.commit()
+
+            c.execute(
+                "SELECT RECIPETITLE FROM recipedata WHERE USERNAME='"+users+"'")
+            records = c.fetchall()
+            recipeList.delete(0, END)
+            for record in records:
+                recipeList.insert(END, record[0].capitalize())
+            titleEntry.delete(0, END)
+            recipeDetailsbox.delete(1.0, END)
+            updateBtn.configure(state=DISABLED)
+            createBtn.configure(state=NORMAL)
+
+    def getMyRecipe():
+        global selectRecipe
+        selectRecipe = recipeList.get(ANCHOR).lower()
+        c.execute("select * from recipedata where USERNAME='" +
+                  users+"' and RECIPETITLE='"+selectRecipe+"'")
+        recipe = c.fetchall()
+
+        if recipe == []:
+            print("no recipe selected")
+
+        else:
+            details = recipe[0][3].capitalize()
+            title = recipe[0][2].capitalize()
+            viewRecipeTitle.configure(text=title)
+            recipeBox.configure(state=NORMAL)
+            recipeBox.delete(1.0, END)
+            recipeBox.insert(0.0, details)
+            recipeBox.configure(state=DISABLED)
+    # search
+
+    def search():
+        searchRecipe = searchBox.get().lower()
+        c.execute("SELECT * FROM recipedata WHERE RECIPETITLE='"+searchRecipe+"'")
+        recipe = c.fetchall()
+
+
+        if recipe != []:
+            viewRecipeTitle.configure(text=recipe[0][2].capitalize())
+            recipeBox.configure(state=NORMAL)
+            recipeBox.delete(1.0, END)
+            recipeBox.insert(0.0, recipe[0][3].capitalize())
+            recipeBox.configure(state=DISABLED)
+        else:
+            viewRecipeTitle.configure(text=searchRecipe)
+            recipeBox.configure(state=NORMAL)
+            recipeBox.delete(1.0, END)
+            recipeBox.insert(0.0, "0 matches found.")
+            recipeBox.configure(state=DISABLED)
+
+    def clearall():
+        viewRecipeTitle.configure(text="T.O.F.U")
+        recipeBox.configure(state=NORMAL)
+        recipeBox.delete(1.0, END)
+        recipeBox.insert(0.0, text)
+        recipeBox.configure(state=DISABLED)
+
+    def logout():
+        win3.destroy()
+        form.loginPage()
+
+    def randomRecipe():
+        c.execute("select RECIPETITLE from recipedata")
+        Recipe=c.fetchall()
+        randomRecipe=random.choice(Recipe)
+        finalrecipe=randomRecipe[0]
+
+
+        c.execute("select * from recipedata where RECIPETITLE='"+finalrecipe+"'")
+        recipedata=c.fetchall()
+        viewRecipeTitle.configure(text=recipedata[0][2])
+        recipeBox.configure(state=NORMAL)
+        recipeBox.delete(1.0, END)
+        recipeBox.insert(0.0, recipedata[0][3])
+        recipeBox.configure(state=DISABLED)
+
+    # functions
 
     createBtn = customtkinter.CTkButton(
         master=formFrame, width=500, text="create recipe", command=createMyRecipe)
