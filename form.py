@@ -16,12 +16,13 @@ except sqlite3.Error as e:
 c = cnxt.cursor()
 c.execute("CREATE TABLE IF NOT EXISTS userdata (USERNAME TEXT PRIMARY KEY NOT NULL UNIQUE, FIRSTNAME TEXT NOT NULL, LASTNAME TEXT NOT NULL, EMAIL TEXT NOT NULL, PASSWORD TEXT NOT NULL)")
 
+
 def loginPage():
     global bgImage
 
     window = CTk()
     appWidth = 360
-    appHeight = 470
+    appHeight = 490
     screenHeight = window.winfo_screenheight()
     screenWidth = window.winfo_screenwidth()
     centerX = (screenWidth/2)-(appWidth/2)
@@ -40,7 +41,8 @@ def loginPage():
         password = passwordEntry.get()
 
         try:
-            c.execute("select * from userdata where USERNAME='" + username+"' and PASSWORD='"+password+"'")
+            c.execute("select * from userdata where USERNAME='" +
+                      username+"' and PASSWORD='"+password+"'")
             userdata = c.fetchall()
         except sqlite3.Error as e:
             print(f"Error executing the database query: {e}")
@@ -92,19 +94,25 @@ def loginPage():
 
     passwordEntry.configure(show="*")
     loginbtn = customtkinter.CTkButton(
-        master=frame1, text="Login", width=300, height=35, command=getUserData)
+        master=frame1, text="Login", width=300, height=25, command=getUserData)
 
     loginbtn.place(y=350, x=25)
-    registerLabel = customtkinter.CTkLabel(
-        master=frame1, text="Dont have an account?", font=("helvatica", 16))
 
-    registerLabel.place(y=405, x=25)
+    forgotPasswordLabel = customtkinter.CTkLabel(
+        master=frame1, text="Forgot  password... ?", font=("helvatica", 14))
+
+    forgotPasswordLabel.place(y=387, x=25)
+
+    forgotpasswordBtn = customtkinter.CTkButton(
+        master=frame1, text="click here", width=150, height=20, command=forgotPassword)
+    forgotpasswordBtn.place(x=174, y=390)
 
     registerBtn = customtkinter.CTkButton(
-        master=frame1, text="Register now", width=120, command=navigate)
-    registerBtn.place(x=204, y=405)
+        master=frame1, text="Create an account.", command=navigate, width=300, height=25)
+    registerBtn.place(x=25, y=435)
 
     window.mainloop()
+
 
 def registerPage():
 
@@ -269,5 +277,113 @@ def registerPage():
     registerBtn = customtkinter.CTkButton(
         master=formFrame, text="login", width=200, command=navigate)
     registerBtn.place(x=270, y=440)
-    
+
     window.mainloop()
+
+
+def forgotPassword():
+    window = customtkinter.CTkToplevel()
+    appWidth = 490
+    appHeight = 300
+    screenHeight = window.winfo_screenheight()
+    screenWidth = window.winfo_screenwidth()
+    centerX = (screenWidth/2)-(appWidth/2)
+    centerY = (screenHeight/2)-(appHeight/2)
+    window.geometry(f"{appWidth}x{appHeight}+{int(centerX)}+{int(centerY)}")
+    window.resizable(False, False)
+    window.title("forgot password ?")
+
+    mainFrame = customtkinter.CTkFrame(
+        master=window, height=appHeight, width=appWidth)
+    mainFrame.pack()
+    mainFrame.pack_propagate(False)
+    mainFrame.propagate(False)
+
+    forgotPasswordTitle = customtkinter.CTkLabel(
+        master=mainFrame, text="Forgot Password", font=("", 20, "bold"))
+    forgotPasswordTitle.pack(pady=20)
+
+    forgotPasswordDescription = customtkinter.CTkLabel(
+        master=mainFrame, text="Lost your password? Please enter your username. You will\n be redirected to a new page to create a new password.", justify="center")
+    forgotPasswordDescription.pack(pady=(0, 20))
+
+    errorLabel = customtkinter.CTkLabel(
+        master=mainFrame, text="", height=18, fg_color="#2C2B2C", width=300, text_color="#2C2B2C")
+    errorLabel.pack(pady=(0,10))
+
+    forgotPasswordEntry = customtkinter.CTkEntry(
+        master=mainFrame, placeholder_text="username", width=300)
+    forgotPasswordEntry.pack(pady=(0, 20))
+
+    # function
+
+    def getUsername():
+        global forgot_username
+        forgot_username = forgotPasswordEntry.get()
+        try:
+            c.execute("select * from userdata where username='" +
+                      forgot_username+"'")
+            data = c.fetchall()
+        except sqlite3.Error as e:
+            print(f"Error executing the database query: {e}")
+        if forgot_username == "":
+            errorLabel.configure(text="username cannot be empty")
+        else:
+            if data == []:
+                errorLabel.configure(text="username not found", fg_color="lightpink", text_color="firebrick")
+                forgotPasswordEntry.delete(0, END)
+            else:
+                # resetpassword=forgot_username
+                for widgets in mainFrame.winfo_children():
+                    widgets.destroy()
+                resetpasswordForm()
+
+    def resetpasswordForm():
+        forgotPasswordTitle = customtkinter.CTkLabel(
+            master=mainFrame, text="Forgot Password", font=("", 20, "bold"))
+        forgotPasswordTitle.pack(pady=20)
+
+        forgotPasswordDescription = customtkinter.CTkLabel(
+            master=mainFrame, text="Lost your password? Please enter your username. You will\n be redirected to a new page to create a new password.", justify="center")
+        forgotPasswordDescription.pack(pady=(0, 20))
+
+        errorLabel = customtkinter.CTkLabel(
+            master=mainFrame, text="", height=18, fg_color="#2C2B2C", width=300, text_color="#2C2B2C")
+        errorLabel.pack(pady=(0,10))
+
+        forgotPasswordEntry = customtkinter.CTkEntry(
+            master=mainFrame, placeholder_text="password", width=300)
+        forgotPasswordEntry.pack(pady=(0, 20))
+
+        forgotconfirmPasswordEntry = customtkinter.CTkEntry(
+            master=mainFrame, placeholder_text="confirm-password", width=300)
+        forgotconfirmPasswordEntry.pack(pady=(0, 20))
+
+        ##inner function
+        def submit():
+            password=forgotPasswordEntry.get()
+            confirmpassword=forgotconfirmPasswordEntry.get()
+            print(password, confirmpassword, forgot_username)
+
+            if password=="" or confirmpassword=="":
+                errorLabel.configure(text="password does not match", text_color="firebrick", fg_color="pink")
+            else:
+                if password!=confirmpassword:
+                    errorLabel.configure(text="password does not match", text_color="firebrick", fg_color="pink")
+                else:
+                    c.execute("update userdata set PASSWORD=:newPassword WHERE USERNAME=:id", {
+                    'newPassword': password, 'id': forgot_username})
+                    cnxt.commit()
+                    forgotPasswordEntry.delete(0, END)
+                    forgotconfirmPasswordEntry.delete(0, END)
+                    errorLabel.configure(text="password has been reset", text_color="darkgreen", fg_color="lightgreen")
+                    window.after(3000, window.destroy)
+
+
+        resetBtn = customtkinter.CTkButton(
+        master=mainFrame, text="submit", height=25, command=submit, width=300)
+        resetBtn.pack(pady=(0, 20))
+
+    nextBtn = customtkinter.CTkButton(
+        master=mainFrame, text="next", height=25, command=getUsername)
+    nextBtn.pack(pady=(0, 20))
