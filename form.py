@@ -7,7 +7,10 @@ from PIL import ImageTk, Image
 import sqlite3
 from main import mainScreen
 textcolor = "whitesmoke"
-cnxt = sqlite3.connect("data/userdata.db")
+try:
+    cnxt = sqlite3.connect("data/userdata.db")
+except sqlite3.Error as e:
+    print(f"Error connecting to the database: {e}")
 c = cnxt.cursor()
 c.execute("CREATE TABLE IF NOT EXISTS userdata (USERNAME TEXT PRIMARY KEY NOT NULL UNIQUE, FIRSTNAME TEXT NOT NULL, LASTNAME TEXT NOT NULL, EMAIL TEXT NOT NULL, PASSWORD TEXT NOT NULL)")
 def loginPage():
@@ -29,9 +32,11 @@ def loginPage():
         global credentials
         username = usernameEntry.get().lower()
         password = passwordEntry.get()
-        c.execute("select * from userdata where USERNAME='" +
-                  username+"' and PASSWORD='"+password+"'")
-        userdata = c.fetchall()
+        try:
+            c.execute("select * from userdata where USERNAME='" + username+"' and PASSWORD='"+password+"'")
+            userdata = c.fetchall()
+        except sqlite3.Error as e:
+            print(f"Error executing the database query: {e}")
         if userdata != []:
             for user in userdata:
                 if username and password in user:
