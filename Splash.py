@@ -1,7 +1,7 @@
 from tkinter import *
 from customtkinter import *
 import customtkinter
-from PIL import ImageTk , Image
+from PIL import Image
 from form import loginPage
 
 splashScreen=CTk()

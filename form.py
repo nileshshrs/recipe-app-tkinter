@@ -1,9 +1,7 @@
 from tkinter import *
 from customtkinter import *
-import tkinter
 import customtkinter
-from tkinter import ttk
-from PIL import ImageTk, Image
+from PIL import Image
 import sqlite3
 from main import mainScreen
 
@@ -319,7 +317,7 @@ def forgotPassword():
 
     def getUsername():
         global forgot_username
-        forgot_username = forgotPasswordEntry.get()
+        forgot_username = forgotPasswordEntry.get().lower()
         try:
             c.execute("select * from userdata where username='" +
                       forgot_username+"'")

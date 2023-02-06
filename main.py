@@ -1,9 +1,7 @@
 from tkinter import *
 from customtkinter import *
-import tkinter
 import customtkinter
 from tkinter import ttk
-from PIL import ImageTk, Image
 import sqlite3
 import form
 import random
