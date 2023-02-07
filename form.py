@@ -324,17 +324,17 @@ def forgotPassword():
             data = c.fetchall()
         except sqlite3.Error as e:
             print(f"Error executing the database query: {e}")
-        if forgot_username == "":
-            errorLabel.configure(text="username cannot be empty")
+
+        if data == []:
+            errorLabel.configure(text="username not found", fg_color="lightpink", text_color="firebrick")
+            forgotPasswordEntry.delete(0, END)
+        elif forgot_username == "":
+            errorLabel.configure(text="username cannot be empty")    
         else:
-            if data == []:
-                errorLabel.configure(text="username not found", fg_color="lightpink", text_color="firebrick")
-                forgotPasswordEntry.delete(0, END)
-            else:
-                # resetpassword=forgot_username
-                for widgets in mainFrame.winfo_children():
-                    widgets.destroy()
-                resetpasswordForm()
+            # resetpassword=forgot_username
+            for widgets in mainFrame.winfo_children():
+                widgets.destroy()
+            resetpasswordForm()
 
     def resetpasswordForm():
         forgotPasswordTitle = customtkinter.CTkLabel(
@@ -352,16 +352,17 @@ def forgotPassword():
         forgotPasswordEntry = customtkinter.CTkEntry(
             master=mainFrame, placeholder_text="password", width=300)
         forgotPasswordEntry.pack(pady=(0, 20))
+        forgotPasswordEntry.configure(show="*")
 
         forgotconfirmPasswordEntry = customtkinter.CTkEntry(
             master=mainFrame, placeholder_text="confirm-password", width=300)
         forgotconfirmPasswordEntry.pack(pady=(0, 20))
+        forgotconfirmPasswordEntry.configure(show="*")
 
         ##inner function
         def submit():
             password=forgotPasswordEntry.get()
             confirmpassword=forgotconfirmPasswordEntry.get()
-            print(password, confirmpassword, forgot_username)
 
             if password=="" or confirmpassword=="":
                 errorLabel.configure(text="password does not match", text_color="firebrick", fg_color="pink")
