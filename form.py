@@ -19,8 +19,8 @@ def loginPage():
     global bgImage
 
     window = CTk()
-    appWidth = 360
-    appHeight = 490
+    appWidth = 350
+    appHeight = 470
     screenHeight = window.winfo_screenheight()
     screenWidth = window.winfo_screenwidth()
     centerX = (screenWidth/2)-(appWidth/2)
@@ -95,22 +95,18 @@ def loginPage():
 
     passwordEntry.configure(show="*")
     loginbtn = customtkinter.CTkButton(
-        master=frame1, text="Login", width=300, height=25, command=getUserData)
+        master=frame1, text="Login", width=300, height=30, command=getUserData)
 
     loginbtn.place(y=350, x=25)
 
-    # forgotPasswordLabel = customtkinter.CTkLabel(
-    #     master=frame1, text="Forgot  password... ?", font=("helvatica", 14))
-
-    # forgotPasswordLabel.place(y=387, x=25)
 
     forgotpasswordBtn = customtkinter.CTkButton(
-        master=frame1, text="click here", height=20, command=forgotPassword)
-    forgotpasswordBtn.place(x=174, y=390)
+        master=frame1, text=" forgot password ? ", height=25, command=forgotPassword, width=140,hover=False, font=("", 12, "underline"), anchor=E, fg_color="#2B2B2B")
+    forgotpasswordBtn.place(x=185, y=405)
 
     registerBtn = customtkinter.CTkButton(
-        master=frame1, text="Create an account.", command=navigate, width=300, height=25)
-    registerBtn.place(x=25, y=435)
+        master=frame1, text=" Create an account.? ", command=navigate, width=140, height=25, hover=False, font=("", 12, "underline"), anchor=W, fg_color="#2B2B2B")
+    registerBtn.place(x=25, y=405)
 
     window.mainloop()
 
