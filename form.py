@@ -55,11 +55,14 @@ def loginPage():
                         mainScreen()
                     fetchUser()
         else:
-            errorLabel.configure(text="username or password incorrect",
-                                 bg_color="lightpink", text_color="firebrick")
-            errorLabel.after(5000, lambda: errorLabel.configure(
-                text="", bg_color="#2B2B2B"))
-
+            try:
+                raise Exception("Username or password incorrect")
+            except Exception as e:
+                print(f"Error: {e}")
+                errorLabel.configure(text=str(e), bg_color="lightpink", text_color="firebrick")
+                errorLabel.after(5000, lambda: errorLabel.configure(
+                    text="", bg_color="#2B2B2B"))
+                    
     frame1 = customtkinter.CTkFrame(
         window, height=appHeight, width=appWidth, bg_color="black")
 
@@ -96,13 +99,13 @@ def loginPage():
 
     loginbtn.place(y=350, x=25)
 
-    forgotPasswordLabel = customtkinter.CTkLabel(
-        master=frame1, text="Forgot  password... ?", font=("helvatica", 14))
+    # forgotPasswordLabel = customtkinter.CTkLabel(
+    #     master=frame1, text="Forgot  password... ?", font=("helvatica", 14))
 
-    forgotPasswordLabel.place(y=387, x=25)
+    # forgotPasswordLabel.place(y=387, x=25)
 
     forgotpasswordBtn = customtkinter.CTkButton(
-        master=frame1, text="click here", width=150, height=20, command=forgotPassword)
+        master=frame1, text="click here", height=20, command=forgotPassword)
     forgotpasswordBtn.place(x=174, y=390)
 
     registerBtn = customtkinter.CTkButton(
@@ -327,11 +330,12 @@ def forgotPassword():
 
         if data == []:
             errorLabel.configure(text="username not found", fg_color="lightpink", text_color="firebrick")
+            errorLabel.after(5000, lambda: errorLabel.configure(text="", fg_color="#2B2B2B"))
             forgotPasswordEntry.delete(0, END)
         elif forgot_username == "":
-            errorLabel.configure(text="username cannot be empty")    
+            errorLabel.configure(text="username cannot be empty")
+            errorLabel.after(5000, lambda: errorLabel.configure(text="", fg_color="#2B2B2B"))   
         else:
-            # resetpassword=forgot_username
             for widgets in mainFrame.winfo_children():
                 widgets.destroy()
             resetpasswordForm()
@@ -365,10 +369,12 @@ def forgotPassword():
             confirmpassword=forgotconfirmPasswordEntry.get()
 
             if password=="" or confirmpassword=="":
-                errorLabel.configure(text="password does not match", text_color="firebrick", fg_color="pink")
+                errorLabel.configure(text="password cannot be empty", text_color="firebrick", fg_color="pink")
+                errorLabel.after(5000, lambda: errorLabel.configure(text="", fg_color="#2B2B2B"))
             else:
                 if password!=confirmpassword:
                     errorLabel.configure(text="password does not match", text_color="firebrick", fg_color="pink")
+                    errorLabel.after(5000, lambda: errorLabel.configure(text="", fg_color="#2B2B2B"))
                 else:
                     c.execute("update userdata set PASSWORD=:newPassword WHERE USERNAME=:id", {
                     'newPassword': password, 'id': forgot_username})
@@ -376,6 +382,7 @@ def forgotPassword():
                     forgotPasswordEntry.delete(0, END)
                     forgotconfirmPasswordEntry.delete(0, END)
                     errorLabel.configure(text="password has been reset", text_color="darkgreen", fg_color="lightgreen")
+                    errorLabel.after(5000, lambda: errorLabel.configure(text="", fg_color="#2B2B2B"))
                     window.after(3000, window.destroy)
 
 

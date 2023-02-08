@@ -6,7 +6,10 @@ import sqlite3
 import form
 import random
 
-cnxt = sqlite3.connect("data/userdata.db")
+try:
+    cnxt = sqlite3.connect("data/userdata.db")
+except sqlite3.Error as e:
+    print(f"Error connecting to the database: {e}")
 c = cnxt.cursor()
 
 textcolor = "whitesmoke"
@@ -118,66 +121,76 @@ def mainScreen():
     # delete
 
     def delete():
-        global selectRecipe
+        try:
+            global selectRecipe
 
-        deleteRecipe = recipeList.get(ANCHOR).lower()
-        c.execute("delete from recipedata where USERNAME='" +
-                  users+"' and RECIPETITLE='"+deleteRecipe+"'")
-        cnxt.commit()
-        recipeList.delete(ANCHOR)
+            deleteRecipe = recipeList.get(ANCHOR).lower()
+            c.execute("delete from recipedata where USERNAME='" +
+                    users+"' and RECIPETITLE='"+deleteRecipe+"'")
+            cnxt.commit()
+            recipeList.delete(ANCHOR)
 
-        if selectRecipe == "":
-            pass
-        elif deleteRecipe == selectRecipe or selectRecipe != "":
-            viewRecipeTitle.configure(text="the recipe has been deleted")
-            recipeBox.configure(state=NORMAL)
-            recipeBox.delete(1.0, END)
-            recipeBox.insert(0.0, "please select a new recipe")
-            recipeBox.configure(state=DISABLED)
-            selectRecipe = ""
+            if selectRecipe == "":
+                pass
+            elif deleteRecipe == selectRecipe or selectRecipe != "":
+                viewRecipeTitle.configure(text="the recipe has been deleted")
+                recipeBox.configure(state=NORMAL)
+                recipeBox.delete(1.0, END)
+                recipeBox.insert(0.0, "please select a new recipe")
+                recipeBox.configure(state=DISABLED)
+                selectRecipe = ""
+        except Exception as e:
+            print("An error occured: ", e)
 
     # create
 
     def createMyRecipe():
-        global selectRecipe
-        recipeName = titleEntry.get().lower()
-        recipeText = recipeDetailsbox.get("0.0", "end").lower()
+        try:
+            global selectRecipe
+            recipeName = titleEntry.get().lower()
+            recipeText = recipeDetailsbox.get("0.0", "end").lower()
 
-        c.execute("select * from recipedata where USERNAME='" +
-                  users+"'and RECIPETITLE='"+recipeName+"'")
-        titlelist = c.fetchall()
+            c.execute("select * from recipedata where USERNAME='" +
+                    users+"'and RECIPETITLE='"+recipeName+"'")
+            titlelist = c.fetchall()
 
-        if recipeName == "" or recipeText == "":
-            viewRecipeTitle.configure(text="Recipe Title or Text Area Empty")
+            if recipeName == "" or recipeText == "":
+                viewRecipeTitle.configure(text="Recipe Title or Text Area Empty")
+                recipeBox.configure(state=NORMAL)
+                recipeBox.delete(1.0, END)
+                recipeBox.insert(
+                    0.0, "Please add a title and a description you want to save as recipe.")
+                recipeBox.configure(state=DISABLED)
+
+            elif titlelist != []:
+                print("recipe of this name already exists in your library")
+            else:
+                recipeData = [
+                    users,
+                    recipeName,
+                    recipeText,
+
+                ]
+
+                c.execute(
+                    "insert into recipedata (USERNAME,RECIPETITLE, RECIPEDETAILS) values(?,?,?)", recipeData)
+                cnxt.commit()
+                recipeList.insert(END, recipeName.capitalize())
+
+                titleEntry.delete(0, END)
+                recipeDetailsbox.delete(1.0, END)
+                viewRecipeTitle.configure(text=recipeName.capitalize())
+                recipeBox.configure(state=NORMAL)
+                recipeBox.delete(1.0, END)
+                recipeBox.insert(0.0, "Your recipe has been created succesfully")
+                recipeBox.configure(state=DISABLED)
+                selectRecipe = recipeName
+        except:
+            viewRecipeTitle.configure(text="Error Occurred")
             recipeBox.configure(state=NORMAL)
             recipeBox.delete(1.0, END)
-            recipeBox.insert(
-                0.0, "Please add a title and a description you want to save as recipe.")
-            recipeBox.configure(state=DISABLED)
-
-        elif titlelist != []:
-            print("recipe of this name already exists in your library")
-        else:
-            recipeData = [
-                users,
-                recipeName,
-                recipeText,
-
-            ]
-
-            c.execute(
-                "insert into recipedata (USERNAME,RECIPETITLE, RECIPEDETAILS) values(?,?,?)", recipeData)
-            cnxt.commit()
-            recipeList.insert(END, recipeName.capitalize())
-
-            titleEntry.delete(0, END)
-            recipeDetailsbox.delete(1.0, END)
-            viewRecipeTitle.configure(text=recipeName.capitalize())
-            recipeBox.configure(state=NORMAL)
-            recipeBox.delete(1.0, END)
-            recipeBox.insert(0.0, "Your recipe has been created succesfully")
-            recipeBox.configure(state=DISABLED)
-            selectRecipe = recipeName
+            recipeBox.insert(0.0, "An error occurred while creating the recipe: " + str(e))
+            recipeBox.configure(state=DISABLED)        
 
     # fetch
 
