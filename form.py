@@ -20,7 +20,7 @@ def loginPage():
 
     window = CTk()
     appWidth = 350
-    appHeight = 470
+    appHeight = 500
     screenHeight = window.winfo_screenheight()
     screenWidth = window.winfo_screenwidth()
     centerX = (screenWidth/2)-(appWidth/2)
@@ -100,14 +100,19 @@ def loginPage():
     loginbtn.place(y=350, x=25)
 
 
-    forgotpasswordBtn = customtkinter.CTkButton(
-        master=frame1, text=" forgot password ? ", height=25, command=forgotPassword, width=140,hover=False, font=("", 12, "underline"), anchor=E, fg_color="#2B2B2B")
-    forgotpasswordBtn.place(x=185, y=405)
+    
+    
 
     registerBtn = customtkinter.CTkButton(
-        master=frame1, text=" Create an account.? ", command=navigate, width=140, height=25, hover=False, font=("", 12, "underline"), anchor=W, fg_color="#2B2B2B")
-    registerBtn.place(x=25, y=405)
+        master=frame1, text="forgot password?", command=forgotPassword, width=140, height=25, hover=False, font=("", 12, "underline"), anchor=W, fg_color="#2B2B2B")
+    registerBtn.place(x=25, y=390)
 
+    rndmLabel=customtkinter.CTkLabel(master=frame1, height=2, width=340,fg_color="#2B2B2B", text="or")
+    rndmLabel.place(y=415, x=5)
+
+    forgotpasswordBtn = customtkinter.CTkButton(
+        master=frame1, text="create account ?", height=30, command=navigate, width=300)
+    forgotpasswordBtn.place(x=25, y=445)
     window.mainloop()
 
 
