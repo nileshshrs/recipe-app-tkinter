@@ -309,7 +309,7 @@ def mainScreen():
     deleteRecipeBtn.place(x=325, y=96)
 
     selectRecipeBtn = CTkButton(
-        master=formFrame, width=200, text="select recipe", height=25, command=getMyRecipe)
+        master=formFrame, width=200, text="select/view recipe", height=25, command=getMyRecipe)
     selectRecipeBtn.place(x=325, y=135)
 
     randomBtn = CTkButton(master=recipeViewFrame,
