@@ -19,6 +19,7 @@ def loginPage():
     global bgImage
 
     window = CTk()
+    customtkinter.set_appearance_mode("dark")
     appWidth = 350
     appHeight = 500
     screenHeight = window.winfo_screenheight()
@@ -121,7 +122,7 @@ def registerPage():
     global registerImg
 
     window = CTk()
-
+    customtkinter.set_appearance_mode("dark")
     registerImg = customtkinter.CTkImage(
         light_image=Image.open("Assets/5.png"), size=(250, 250))
 
@@ -285,6 +286,7 @@ def registerPage():
 
 def forgotPassword():
     window = customtkinter.CTkToplevel()
+    customtkinter.set_appearance_mode("dark")
     appWidth = 490
     appHeight = 300
     screenHeight = window.winfo_screenheight()

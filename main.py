@@ -19,6 +19,7 @@ selectRecipe = ""
 def mainScreen():
 
     win3 = CTk()
+    customtkinter.set_appearance_mode("dark")
     users = form.credentials
 
     greetings = (f"Welcome, {users}...!")

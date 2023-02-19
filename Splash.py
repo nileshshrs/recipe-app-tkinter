@@ -4,9 +4,11 @@ import customtkinter
 from PIL import Image
 from form import loginPage
 
+
 splashScreen=CTk()
 splashScreen.title("splashscreen")
 splashScreen.overrideredirect(True)
+customtkinter.set_appearance_mode("dark")
 screenWidth= splashScreen.winfo_screenwidth()
 screenHeight= splashScreen.winfo_screenheight()
 splashScreenWidth=350
