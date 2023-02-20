@@ -274,7 +274,7 @@ def registerPage():
     registerBtn.place(x=57, y=390)
 
     loginLabel = customtkinter.CTkLabel(
-        master=formFrame, text="Dont  have  an  account  ?", font=("helvatica", 16, "bold"))
+        master=formFrame, text="Already  have  an  account  ?", font=("helvatica", 16, "bold"))
     loginLabel.place(x=57, y=440)
 
     registerBtn = customtkinter.CTkButton(
